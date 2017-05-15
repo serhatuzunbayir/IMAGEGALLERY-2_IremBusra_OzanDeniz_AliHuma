@@ -4,3 +4,9 @@ c:\users\asus\documents\visual studio 2015\Projects\ImageGallery\bin\Debug\Image
 c:\users\asus\documents\visual studio 2015\Projects\ImageGallery\bin\Debug\ImageGallery.pdb
 c:\users\asus\documents\visual studio 2015\Projects\ImageGallery\obj\Debug\ImageGallery.exe
 c:\users\asus\documents\visual studio 2015\Projects\ImageGallery\obj\Debug\ImageGallery.pdb
+C:\GitProjects\ImageGallery\ImageGallery\bin\Debug\ImageGallery.exe.config
+C:\GitProjects\ImageGallery\ImageGallery\bin\Debug\ImageGallery.exe
+C:\GitProjects\ImageGallery\ImageGallery\bin\Debug\ImageGallery.pdb
+C:\GitProjects\ImageGallery\ImageGallery\obj\Debug\ImageGallery.csprojResolveAssemblyReference.cache
+C:\GitProjects\ImageGallery\ImageGallery\obj\Debug\ImageGallery.exe
+C:\GitProjects\ImageGallery\ImageGallery\obj\Debug\ImageGallery.pdb

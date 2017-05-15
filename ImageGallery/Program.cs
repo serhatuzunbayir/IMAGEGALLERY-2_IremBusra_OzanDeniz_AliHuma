@@ -9,39 +9,57 @@ namespace ImageGallery
     public interface IAlbum
     {
         void Show(int depth);
-        string getItemName();
+        int GetId();
+        void Rename(string newName);
+        IAlbum GetPhoto(int ID);
+        
+        
     }
 
 
     public class Album : IAlbum
     {
-
+        int Id;
         string name;
         List<IAlbum> my_album = new List<IAlbum>();
+        
+        
 
-        public string getItemName()
-        {
-            return name;
-        }
-        public Album(string album_name)
+
+
+
+        public Album(string album_name, int id)
         {
             name = album_name;
+            Id = id;
+        }
+
+        public int GetId()
+        {
+            return Id;
+        }
+
+        public void Rename(string newName)
+        {
+            name = newName;
         }
 
         public void Show(int depth)
         {
-            Console.WriteLine("|----------------------|");
+            Console.WriteLine("|Id = |" + Id.ToString());
             Console.WriteLine(new String('-', depth) + "Album: " + name);
-            Console.WriteLine("|----------------------|");
+            
 
 
             if (my_album.Count() < 1)
             {
                 Console.WriteLine("|_Your album is empty__|");
+                Console.WriteLine("||");
             }
 
             else
             {
+                
                 foreach (IAlbum item in my_album)
                 {
 
@@ -57,40 +75,76 @@ namespace ImageGallery
             my_album.Add(album);
         }
 
-        public IAlbum Find(string name)
+        public void DeletePhoto(IAlbum album)
         {
-
-            IAlbum album = my_album.Find(x => x.getItemName() == name);
-            return album;
+            my_album.Remove(album);
         }
+        
+        
+       
+        public IAlbum GetPhoto(int ID)
+        {
+            if (Id == ID)
+            {
+                return this;
+            }
 
+            //Make it recursive
+            //foreach (IAlbum alb in my_album.ToArray())
+            //{
+            //    if (alb.GetPhoto(ID) == null) continue;
+            //}
+            return null;
+        }
 
 
     }
 
     public class Photo : IAlbum
     {
+        int Id;
         string name;
-        public Photo(string photo_name)
+        public Photo(string photo_name, int id)
         {
 
             name = photo_name;
+            Id = id;
         }
 
-        public string getItemName()
+        public int GetId()
         {
-            return name;
+            return Id;
         }
+
+        public IAlbum GetPhoto(int ID)
+        {
+            if (Id == ID)
+                return this;
+            else return null;
+        }
+
+        public void Rename(string newName)
+        {
+            name = newName;
+        }
+
         public void Show(int depth)
         {
 
-            Console.WriteLine("|**********************|");
-            Console.WriteLine(new String('-', depth) + "Photo: " + name);
-            Console.WriteLine("|**********************|");
+            Console.WriteLine("|Id = |" + Id);
+            Console.WriteLine("|" + new String('-', depth) + "Photo: " + name);
+            Console.WriteLine("||");
         }
+
+       
 
 
     }
+
+    
+   
+
+    
 
 
 
@@ -102,24 +156,26 @@ namespace ImageGallery
     {
         static void Main(string[] args)
         {
-
+            int albumId = 0;
             int menuSelection = 0;
+            
             string name;
 
             Album root, album;
             Photo photo;
-            root = new Album("Root");
+            root = new Album("Root", 0);
             do
             {
 
                 Console.WriteLine("~~ Menu ~~");
                 Console.WriteLine("1 - To create new album");
                 Console.WriteLine("2 - To create new photo");
-                Console.WriteLine("3 - To edit items");
+                Console.WriteLine("3 - To rename items");
+                Console.WriteLine("4 - To delete item");
                 Console.WriteLine("9 - To show all");
                 Console.WriteLine("0 - To exit");
 
-                menuSelection = Convert.ToInt32(Console.ReadLine());
+               menuSelection = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine(menuSelection);
 
 
@@ -134,8 +190,9 @@ namespace ImageGallery
 
                         if (name == "0") break;
                         Console.WriteLine("Album '" + name + "' created!");
-                        album = new Album(name);
+                        album = new Album(name, GetId());
                         root.AddPhoto(album);
+                        
                         break;
 
                     case 2:
@@ -145,32 +202,53 @@ namespace ImageGallery
 
                         if (name == "0") break;
                         Console.WriteLine("Photo '" + name + "' created!");
-                        photo = new Photo(name);
+                        photo = new Photo(name, GetId());
                         root.AddPhoto(photo);
                         break;
 
                     case 3:
                         Console.Clear();
                         root.Show(0);
-                        Console.WriteLine("Enter item name");
-                        name = Convert.ToString(Console.ReadLine());
+                        Console.WriteLine("Enter item Id");
+                        int id = Convert.ToInt32(Console.ReadLine());
 
-                        try
-                        {
-                            Album item = (Album)root.Find(name);
-                            Console.WriteLine("Enter an item name to add> " + item.getItemName());
-                            name = Convert.ToString(Console.ReadLine());
-                            item.AddPhoto(root.Find(name));
-                            Console.WriteLine("Success!");
-                        }
+                        Console.WriteLine("Enter new name");
+                        root.GetPhoto(id).Rename(Console.ReadLine());
 
-                        catch (Exception e)
-                        {
-                            throw e;
-                        }
+
+                        break;
+
+                    case 4:
+                        Console.Clear();
+                        root.Show(0);
+                        Console.WriteLine("Enter item Id to delete");
+                        int deleteId = Convert.ToInt32(Console.ReadLine());
+
+                        root.DeletePhoto(root.GetPhoto(deleteId));
 
                         
                         break;
+
+
+                    case 5:
+                        Console.Clear();
+                        root.Show(0);
+                        Console.WriteLine("Enter two item id ([add_me] [to_this_ALBUM]");
+                        int addId = Convert.ToInt32(Console.ReadLine());
+                        int thisId = Convert.ToInt32(Console.ReadLine());
+
+                        Album addToAlbum = null;
+                        IAlbum item = null;
+
+
+                        addToAlbum = (Album)root.GetPhoto(thisId);
+                        item = root.GetPhoto(addId);
+
+                        addToAlbum.AddPhoto(item);
+                        root.DeletePhoto(item);
+                        root.Show(0);
+                        break;
+
                     case 9:
                         Console.Clear();
                         root.Show(0);
@@ -180,9 +258,13 @@ namespace ImageGallery
 
             } while (menuSelection != 0);
 
+            int GetId()
+            {
+                albumId++;
+                return albumId;
+            }
 
 
-            
 
 
 
